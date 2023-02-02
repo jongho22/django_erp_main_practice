@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-7" >
+        </br>
+        <div class="container">
+            <h1>COA 관리 페이지</h1>
+        
+        </div>
+        </br>
+        <div class="container">
+            
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope='col'>코드</th>
+                        <th scope='col'>계정명</th>
+                        <th scope='col'>대분류</th>
+                        <th scope='col'>중분류</th>
+                        <th scope='col'>소분류</th>
+                        <th scope='col'>재무제표</th>
+                        <th scope='col'>비고</th>
+                    </tr>
+                    
+                </thead>
+                <tbody class="table_body">
+                </tbody>
+            </table>
+        </div>
+
+        <!--페이지네이션-->
+        <div class="position-relative">
+            <div class="position-absolute top-50 start-50 translate-middle">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination"></ul>
+            </nav>
+        </div>
+        </br>
+        </br>
+    </div>
+    <div class="container text-center">
+        <h1 id="main_title"></h1>
+    </div>
+    </div>
+    
+    <div class="col-5">
+        <div class="container">
+
+        </br><h1>데이터 추가</h1></br></br>
+            <div class="border border-2">
+            </br>
+            <form id="form" name = "form" method="POST">
+                {% csrf_token %} 
+                <div class="container text-center">    
+                    <div class="row row-cols-2">
+                        <p>코드 : </p> 
+                        <input type="number" name="코드"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>계정명 : </p> 
+                        <input type="text" name="계정명"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>계정_대분류 : </p> 
+                        <input type="text" name="계정_대분류"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>계정_중분류 : </p> 
+                        <input type="text" name="계정_중분류"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>계정_소분류 : </p>  
+                        <input type="text" name="계정_소분류"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>제무제표 : </p>  
+                        <input type="text" name="재무제표"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>비고 : </p>  
+                        <input type="text" name='비고'></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row-cols-2">
+                        <button class="btn btn-success" type="submit" onclick="formSubmit()">추가</button>
+                    </div>
+                </div>
+            </form>
+            </br>
+            </div>
+        </div>
+    </div>
+</div>
+</br>
+
+<script>
+
+    $(document).ready(function reqAjax() {
+
+        var currentPage = window.location.href.split("/")
+        
+        if (currentPage[5] == ""){currentPage = 1;}
+        else {currentPage = currentPage[5].substr(6)}
+     
+        $.ajax({
+            url:'/erp/api/COA/?page='+currentPage
+            , method : 'GET'
+            , dataType:"json"
+            , success :  function(data){
+
+                // 총 페이지 계산
+                var totalCount = data["count"]
+                var totalPage = Math.ceil(totalCount / 10)
+                
+                // 페이지 그룹
+                const pageCount = 5
+                
+                let pageGroup = Math.ceil(currentPage / pageCount)
+                let lastNumber = pageGroup * pageCount // 5
+
+                if (lastNumber > totalPage) {lastNumber = totalPage}
+                let firstNumber = lastNumber - (pageCount - 1) // 1
+                if(firstNumber<=0){firstNumber=1}
+                const next = lastNumber + 1 // 6
+                const prev = firstNumber - 1 // 0
+                
+                var page = ""
+                
+                // 이전 버튼
+                if(currentPage>5){
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}">이전</a></li>`
+                }
+                // 1~5만큼 페이지네이션 그려줌
+                for (let i = firstNumber; i <= lastNumber; i++) {
+                page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}">${i}</a></li>`
+                }
+                // 다음 버튼
+                if(currentPage!=totalPage){
+                page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}">다음</a></li>`
+                }
+                $('.pagination').append(page);
+
+                str = '<TR>';
+                
+                let end_data = data["results"].length
+
+                for(var j = 0; j < end_data; j++){
+                    str +=  '<TD> '+ '<a href="/erp/coa/' + data["results"][j].코드 + '">' + data["results"][j].코드 + '&nbsp</TD>' +
+                        '<TD>' + data["results"][j].계정명 + '</TD>' + 
+                        '<TD>' + data["results"][j].계정_대분류 + '</TD>' +
+                        '<TD>' + data["results"][j].계정_중분류 + '</TD>' +
+                        '<TD>' + data["results"][j].계정_소분류 + '</TD>' +
+                        '<TD>' + data["results"][j].재무제표 + '</TD>' +
+                        '<TD>' + data["results"][j].비고 + '</TD>';
+                    str += '</TR>';
+                }
+                // 데이터 확인
+                console.log("가져오기 성공");
+                console.log(data);
+                console.log("첫번째 페이지 : " + firstNumber);
+                console.log("마지막 페이지 : " + lastNumber);
+                console.log("데이터 개수 : " + totalCount);
+                console.log("현재 페이지 : " + currentPage);
+                console.log("전체 페이지 : " + totalPage);
+
+                $('.table_body').append(str);
+            },
+            error: function(result) {
+                $('#main_title').append("로그인이 필요합니다 !");
+            }
+        })
+    })
+
+    function formSubmit() {
+        var params = jQuery("#form").serialize(); // serialize() : 입력된 모든Element(을)를 문자열의 데이터에 serialize 한다.
+        
+        $.ajax({
+            url: '/erp/api/COA/',
+            type: 'POST',
+            data:params,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: 'html',
+            success: function (result) {
+                console.log("성공")
+            }
+        });
+    }
+</script>
+
+{% endblock %}

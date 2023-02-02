@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+</br>
+<section class="section">
+    <div class="container" >
+        <div class="row">
+            <h1>로그인</h1>
+            
+            <div class="container container--mini">
+                </br>   
+                <form id="loginform" role="form" method="post">
+                    {% csrf_token %}
+                    {% comment %} <input type="hidden" name="csrfmiddlewaretoken" value="cS1ZbBXpnPDwuTzwNTcd504yDQQUh2Wg2hPPrJ7i2YHdIACtWXKvp34rurkLfm7s"> {% endcomment %}
+                    
+        
+                    <div id="div_id_username" class="clearfix control-group ">
+                        <div class="form-group">
+                        <label for="id_username">닉네임 :</label>
+                        <input type="hidden" name="username" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="" autofocus="" value="">
+                        <input type="text" name="email" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="" autofocus="">
+                        
+                        </div>
+                    </div>
+        
+                    <div id="div_id_password" class="clearfix control-group ">
+                        <div class="form-group">
+                        <label for="id_password">비밀번호 :</label>
+                        <input type="password" name="password" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="">
+                        
+                        </div>
+                    </div>
+                </br>
+                    
+                </form>
+                <div class="form-actions-no-box">
+                    <button class="btn btn-success" type="submit" onclick="formLogin()">로그인</button>
+                </div>
+                </br>
+                <p class="small text-center text-gray-soft">관리자 등록이 필요하신가요? <a href="/erp/register/">관리자 등록</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function formLogin() {
+        var params = jQuery("#loginform").serialize(); // serialize() : 입력된 모든Element(을)를 문자열의 데이터에 serialize 한다.
+        
+        $.ajax({
+            url: '/erp/api/acounts/login/',
+            method: 'POST',
+            data:params,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: 'html',
+            success: function (result) {
+                location.replace('/erp/');
+            }
+        });
+    }
+    
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": '{{csrf_token}}' }
+    });
+       
+</script>
+{% endblock %}

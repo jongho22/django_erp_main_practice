@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>erp 관리페이지</title>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    {% comment %} <script src="{% static 'js/scripts.js' %}"></script> {% endcomment %}
+    
+    <script src="https://kit.fontawesome.com/8fb4fc16ee.js" crossorigin="anonymous"></script>
+
+</head>
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand" style="background-color: #5F7161">
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-4" href="/erp/" style='color:white' ><i class="fa-brands fa-youtube" style='color:white'></i> ERP TEST</a>
+        <!-- Sidebar Toggle-->
+        {% comment %} <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button> {% endcomment %}
+        
+        <div class="position-absolute top-50 end-0 translate-middle-y">
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    {% if user.is_authenticated %}
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" style="color:white" data-bs-toggle="dropdown" aria-expanded="false">{{user}}님 <i class="fas fa-user fa-fw" style="color:white"></i></a>
+                    {% else %}
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" style="color:white" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw" style="color:white"></i></a>
+                    {% endif %}
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+    
+                        {% if user.is_authenticated %}
+                        <li><a class="dropdown-item" onclick='formLogout()'>로그아웃</a></li>
+                        {% else %}
+                        <li><a class="dropdown-item" href="/erp/register/">관리자 등록</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="/erp/login/">로그인</a></li>
+          
+                        {% endif %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Main</div>
+                        <a class="nav-link" href="/erp/">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            HOME
+                        </a>
+                        <a class="nav-link" href="http://127.0.0.1:8000/erp/coa/">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                            COA 페이지
+                        </a>
+                        <a class="nav-link" href="http://127.0.0.1:8000/erp/product/">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                            제품 페이지
+                        </a>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    ACIN
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            {% block content %}
+            <div class="container text-center">
+                <br>
+                <h1>안녕하세요</h1>
+                <h1>메인 페이지 입니다.</h1>
+
+                {% if user.is_authenticated %}
+                <p>{{user}}님 안녕하세요!! <i class="fa-solid fa-poo"></i></p>
+                {% endif %}
+                
+            </div>
+            {% endblock %}
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; ERP Website 2023</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script>
+        function formLogout() {
+            
+            $.ajax({
+                url: '/erp/api/acounts/logout/',
+                type: 'POST',
+                success: function (result) {
+                    location.replace('/erp/');
+                }
+            });
+        }
+        $.ajaxSetup({
+            headers: { "X-CSRFToken": '{{csrf_token}}' }
+        });
+    </script>
+</body>
+</html>

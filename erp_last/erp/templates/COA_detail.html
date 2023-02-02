@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    </br></br>
+    <form id="form" name = "form" method="POST">
+        {% csrf_token %} 
+        <div class="container text-center">
+            <h1></h1>
+            <hr>
+            <div class="row row-cols-2">
+                <p>코드 : </p> 
+                <input type="number" id ="코드" name="코드"></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row row-cols-2">
+                <p>계정명 : </p> 
+                <input type="text" id ="계정명" name="계정명"></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row row-cols-2">
+                <p>계정_대분류 : </p> 
+                <input type="text" id ="계정_대분류" name="계정_대분류"></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row row-cols-2">
+                <p>계정_중분류 : </p> 
+                <input type="text" id ="계정_중분류" name="계정_중분류"></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row row-cols-2">
+                <p>계정_소분류 : </p>  
+                <input type="text" id ="계정_소분류" name="계정_소분류"></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row row-cols-2">
+                <p>재무제표 : </p>  
+                <input type="text" id ="재무제표" name="재무제표"></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row row-cols-2">
+                <p>비고 : </p>  
+                <input type="text" id ="비고" name='비고'></input>
+            </div>
+        </div>
+        <div class="container text-center">
+            <hr>
+            <div class="row-cols-2">
+                <button class="btn btn-dark" type="submit" onclick="formChange()">수정</button>
+            </div>
+        </div>
+    </form>
+    <div class="container text-center">
+        <br>
+        <div class="row-cols-2">
+            <button class="btn btn-danger" onclick="formDelete()" >삭제</button>
+        </div>
+    </div>
+</br></br>
+</div> 
+<script>
+    $(document).ready(function reqAjax() {
+        var code = window.location.href.split("/")
+
+        $.ajax({
+            url:'/erp/api/COA/' + code[5] 
+            , method : 'GET'
+            , dataType:"json"
+            , success :  function(data){
+                $("h1").append("<b>코드 : ["+ data.코드 +"]</b>" + " COA 상세 페이지");
+                $("input#코드").attr('value',data.코드);
+                $("input#계정명").attr('value',data.계정명);
+                $("input#계정_대분류").attr('value',data.계정_대분류);
+                $("input#계정_중분류").attr('value',data.계정_중분류);
+                $("input#계정_소분류").attr('value',data.계정_소분류);
+                $("input#재무제표").attr('value',data.재무제표);
+                $("input#비고").attr('value',data.비고);
+            }
+        })
+    })
+
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": '{{csrf_token}}' }
+    });
+
+    function formDelete() {
+        var code = window.location.href.split("/")
+        $.ajax({
+            url:'/erp/api/COA/' + code[5] 
+            , method : 'DELETE'
+            , success : function(){
+                location.replace("/erp/coa/");
+            }
+        })
+    }
+
+    function formChange() {
+        var code = window.location.href.split("/")
+        var params = jQuery("#form").serialize();
+
+        $.ajax({
+            url:'/erp/api/COA/' + code[5] + "/"
+            , method : 'PUT'
+            , data:params
+            , contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
+            , dataType: 'html'
+            , success : function(){
+                var link = '/erp/api/COA/' + code[5];
+                location.replace(link);
+            }
+        })
+    }
+
+</script>
+
+{% endblock %}

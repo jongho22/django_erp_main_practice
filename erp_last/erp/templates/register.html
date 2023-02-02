@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+</br>
+<section class="section">
+    <div class="container" >
+        <div class="row">
+            <h1>회원가입</h1>
+            
+            <div class="container container--mini">
+                </br>   
+                <form id="registrationform" role="form" method="post">
+                    {% csrf_token %}
+                    {% comment %} <input type="hidden" name="csrfmiddlewaretoken" value="cS1ZbBXpnPDwuTzwNTcd504yDQQUh2Wg2hPPrJ7i2YHdIACtWXKvp34rurkLfm7s"> {% endcomment %}
+                    
+        
+                    <div id="div_id_username" class="clearfix control-group ">
+                        <div class="form-group">
+                        <label for="id_username">이메일 :</label>
+                        <input type="hidden" name="username" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="" autofocus="" value="">
+                        <input type="text" name="email" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="" autofocus="">
+                        
+                        </div>
+                    </div>
+                    <div id="div_id_password" class="clearfix control-group ">
+                        <div class="form-group">
+                        <label for="id_password">비밀번호 :</label>
+                        <input type="password" name="password1" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="">
+                        
+                        </div>
+                    </div>
+                    <div id="div_id_password" class="clearfix control-group ">
+                        <div class="form-group">
+                        <label for="id_password">확인 비밀번호 :</label>
+                        <input type="password" name="password2" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="">
+                        
+                        </div>
+                    </div>
+                </br>        
+                </form>
+                <div class="form-actions-no-box">
+                    <button class="btn btn-success" type="submit" onclick="formRegister()">등록</button>
+                </div>
+                <p id="error"></p>
+                </br>
+                <p class="small text-center text-gray-soft">관리자가 이미 등록 되어있다면 > <a href="/erp/login/">로그인</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function formRegister() {
+        var params = jQuery("#registrationform").serialize(); // serialize() : 입력된 모든Element(을)를 문자열의 데이터에 serialize 한다.
+        
+        $.ajax({
+            url: '/erp/api/acounts/registration/',
+            type: 'POST',
+            data:params,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: 'html',
+            success: function (result) {
+                location.replace('/erp/');
+            },
+            error: function(result) {
+                console.log(result)
+            }
+        });
+    }
+</script>
+{% endblock %}

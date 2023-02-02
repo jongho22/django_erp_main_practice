@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    
+    <div class="col-8" >
+        
+        </br>
+        <div class="container">
+            <h1>제품 관리 페이지</h1>
+        </div>
+        </br></br>
+        <div class="container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope='col'>제품코드</th>
+                        <th scope='col'>제품명</th>
+                        <th scope='col'>포장단위</th>
+                        <th scope='col'>제약사</th>
+                        <th scope='col'>보험코드</th>
+                        <th scope='col'>표준코드</th>
+                        <th scope='col'>기준가</th>
+                        <th scope='col'>급여</th>
+                        <th scope='col'>구분</th>
+                        <th scope='col'>성문코드</th>
+            
+                    </tr>
+                    
+                </thead>
+                <tbody class="table_body">
+                </tbody>
+            </table>
+        </div>
+    
+
+        <!--페이지네이션-->
+        <div class="position-relative">
+            <div class="position-absolute top-50 start-50 translate-middle">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination"></ul>
+            </nav>
+            
+        </div>
+        </br>
+        </br>
+    </div>
+    <div class="container text-center">
+        <h1 id="main_title"></h1>
+    </div>
+       
+    </div>
+    <div class="col-4" >
+        
+        <div class="container" >
+
+        </br><h1>데이터 추가</h1></br></br>
+            <div class="border border-2">
+            </br>
+            <form id="form" name = "form" method="POST">
+                {% csrf_token %} 
+                <div class="container text-center">
+                    <div class="row row-cols-2">
+                        <p>제품 코드 : </p> 
+                        <input type="text" name="제품코드"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>제품명 : </p> 
+                        <input type="text" name="제품명"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>포장단위 : </p> 
+                        <input type="text" name="포장단위"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>제약사 : </p> 
+                        <input type="text" name="제약사"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>보험코드 : </p> 
+                        <input type="text" name="보험코드"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>표준코드 : </p> 
+                        <input type="text" name="표준코드"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>기준가 : </p> 
+                        <input type="number" name="기준가"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>급여 : </p> 
+                        <input type="number" name="급여"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>구분 : </p> 
+                        <input type="text" name="구분"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row row-cols-2">
+                        <p>성문코드 : </p> 
+                        <input type="text" name="성문코드"></input>
+                    </div>
+                </div>
+                <div class="container text-center">
+                    <hr>
+                    <div class="row-cols-2">
+                        <button class="btn btn-success" type="submit" onclick="formSubmit()">추가</button>
+                    </div>
+                </div>
+            </form>
+            </br>
+            </div>
+            
+        </div>
+    </div>
+</div>
+</br>
+
+<script>
+    $(document).ready(function reqAjax() {
+
+        var currentPage = window.location.href.split("/")
+        
+        if (currentPage[5] == ""){currentPage = 1;}
+        else {currentPage = currentPage[5].substr(6)}
+
+        $.ajax({
+            url:'../api/Product/?page='+currentPage
+            , method : 'GET'
+            , dataType:"json"
+            , success :  function(data){
+                
+                // 총 페이지 계산
+                var totalCount = data["count"]
+                var totalPage = Math.ceil(totalCount / 10)
+                
+                // 페이지 그룹
+                const pageCount = 5
+                
+                let pageGroup = Math.ceil(currentPage / pageCount)
+                let lastNumber = pageGroup * pageCount // 5
+
+                if (lastNumber > totalPage) {lastNumber = totalPage}
+                let firstNumber = lastNumber - (pageCount - 1) // 1
+                if(firstNumber<=0){firstNumber=1}
+                const next = lastNumber + 1 // 6
+                const prev = firstNumber - 1 // 0
+                
+                var page = ""
+                
+                // 이전 버튼
+                if(currentPage>5){
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}">이전</a></li>`
+                }
+                // 1~5만큼 페이지네이션 그려줌
+                for (let i = firstNumber; i <= lastNumber; i++) {
+                page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}">${i}</a></li>`
+                }
+                // 다음 버튼
+                if(currentPage!=totalPage){
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}">다음</a></li>`
+                }
+                $('.pagination').append(page);
+
+                str = '<TR>';
+
+                let end_data = data["results"].length
+                for(var j = 0; j < end_data; j++){
+                    str +=  '<TD>'+ '<a href="/erp/product/' + data["results"][j].제품코드 + '">' + data["results"][j].제품코드 + '</TD>'+
+                            '<TD>' + data["results"][j].제품명 + '</TD>' + 
+                            '<TD>' + data["results"][j].포장단위 + '</TD>' +
+                            '<TD>' + data["results"][j].제약사 + '</TD>' +
+                            '<TD>' + data["results"][j].보험코드 + '</TD>' +
+                            '<TD>' + data["results"][j].표준코드 + '</TD>' +
+                            '<TD>' + data["results"][j].기준가 + '</TD>' + 
+                            '<TD>' + data["results"][j].급여 + '</TD>' +
+                            '<TD>' + data["results"][j].구분 + '</TD>' +
+                            '<TD>' + data["results"][j].성문코드 + '</TD>';
+                    str += '</TR>';
+                }
+                // 데이터 확인
+                console.log("가져오기 성공");
+                console.log(data);
+                console.log("첫번째 페이지 : " + firstNumber);
+                console.log("마지막 페이지 : " + lastNumber);
+                console.log("데이터 개수 : " + totalCount);
+                console.log("현재 페이지 : " + currentPage);
+                console.log("전체 페이지 : " + totalPage);
+                
+                $('.table_body').append(str);
+            },
+            error: function(result) {
+                $('#main_title').append("로그인이 필요합니다 !");
+            }
+        })
+    })
+
+    function formSubmit() {
+        var params = jQuery("#form").serialize(); // serialize() : 입력된 모든Element(을)를 문자열의 데이터에 serialize 한다.
+        
+        $.ajax({
+            url: '/erp/api/Product/',
+            type: 'POST',
+            data:params,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: 'html',
+            success: function (result) {
+                console.log("성공")
+            }
+        });
+    }
+</script>
+{% endblock %}
