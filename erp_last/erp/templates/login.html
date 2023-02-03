@@ -11,15 +11,12 @@
                 </br>   
                 <form id="loginform" role="form" method="post">
                     {% csrf_token %}
-                    {% comment %} <input type="hidden" name="csrfmiddlewaretoken" value="cS1ZbBXpnPDwuTzwNTcd504yDQQUh2Wg2hPPrJ7i2YHdIACtWXKvp34rurkLfm7s"> {% endcomment %}
                     
-        
                     <div id="div_id_username" class="clearfix control-group ">
                         <div class="form-group">
                         <label for="id_username">닉네임 :</label>
                         <input type="hidden" name="username" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="" autofocus="" value="">
                         <input type="text" name="email" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="" autofocus="">
-                        
                         </div>
                     </div>
         
@@ -27,7 +24,6 @@
                         <div class="form-group">
                         <label for="id_password">비밀번호 :</label>
                         <input type="password" name="password" maxlength="100" autocapitalize="off" autocorrect="off" class="form-control textinput textInput" required="">
-                        
                         </div>
                     </div>
                 </br>
