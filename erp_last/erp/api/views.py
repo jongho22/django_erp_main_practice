@@ -6,9 +6,9 @@ from rest_framework import generics
 
 from rest_framework import permissions
 # 인증 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+#from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 # 권한
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+#from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # 유저 확인
 #from ..permissions import IsOwenerOrReadOnly
 
