@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .api.views import ProductViewset,COA_Viewset,UserCreate
+from .api.views import ProductViewset,COA_Viewset,UserCreate,Department_Viewset,Incumbent_Viewset
 from rest_framework.routers import DefaultRouter
 from . import views
 
@@ -8,6 +8,9 @@ from . import views
 router = DefaultRouter()
 router.register('Product', ProductViewset, basename='Product')
 router.register('COA', COA_Viewset, basename='COA')
+router.register('Department',Department_Viewset,basename='Department')
+router.register('Incumbent',Incumbent_Viewset,basename='Incumbent')
+
 
 urlpatterns = [
     path('api/', include(router.urls)),
@@ -24,6 +27,9 @@ urlpatterns = [
     # COA
     path('coa/',views.coa),
     path('coa/<int:pk>/',views.coaDetail),
+
+    # 재직자
+    path('incumbent/',views.incumbent),
     
     # 로그인
     path('login/',views.login),

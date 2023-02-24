@@ -17,6 +17,9 @@ def coaDetail(request,pk) :
 def productDetail(request,pk) :
     return render(request,'product_detail.html')
 
+def incumbent(request) :
+    return render(request,'incumbent.html')
+
 def login(request) :
     return render(request,'login.html')
 

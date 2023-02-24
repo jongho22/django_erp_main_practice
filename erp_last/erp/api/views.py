@@ -1,5 +1,5 @@
-from ..models import Product, COA,User
-from .serializers import ProductSerializer,COA_Serializer,UserSerializer
+from ..models import Product, COA,User,Department,Incumbent
+from .serializers import ProductSerializer,COA_Serializer,UserSerializer,Department_Serializer,Incumbent_Serializer
 
 from rest_framework import viewsets
 from rest_framework import generics
@@ -34,6 +34,20 @@ class COA_Viewset(viewsets.ModelViewSet) :
 
     queryset = COA.objects.all()
     serializer_class = COA_Serializer
+
+class Department_Viewset(viewsets.ModelViewSet) :
+    # permission 추가
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Department.objects.all()
+    serializer_class = Department_Serializer
+
+class Incumbent_Viewset(viewsets.ModelViewSet) :
+    # permission 추가
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Incumbent.objects.all()
+    serializer_class = Incumbent_Serializer
 
 # 회원가입
 class UserCreate(generics.CreateAPIView):

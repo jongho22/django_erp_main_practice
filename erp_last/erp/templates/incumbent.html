@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12" >
+        </br>
+        <div class="container">
+            <h1>중헌제약 재직자 명단</h1>
+        
+        </div>
+        <div class="container">
+                
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope='col'>사번</th>
+                        <th scope='col'>구분</th>
+                        <th scope='col'>이름</th>
+                        <th scope='col'>영문이름</th>
+                        <th scope='col'>근무지</th>
+                        <th scope='col'>부서</th>
+                        <th scope='col'>팀</th>
+                        <th scope='col'>직급</th>
+                        <th scope='col'>직책</th>
+                        <th scope='col'>입사일</th>
+                        <th scope='col'>근속일</th>
+                        <th scope='col'>주민등록번호</th>
+                        <th scope='col'>생년월일</th>
+                        <th scope='col'>연락처</th>
+                        <th scope='col'>비상연락망</th>
+                        <th scope='col'>회사 이메일</th>
+                        <th scope='col'>개인 이메일</th>
+                        <th scope='col'>주소</th>
+                        <th scope='col'>최종학력</th>
+                        <th scope='col'>학위</th>
+                        <th scope='col'>학교</th>
+                        <th scope='col'>전공</th>
+                        <th scope='col'>학점</th>
+                        <th scope='col'>입사구분</th>
+                        <th scope='col'>경력사항1</th>
+                        <th scope='col'>경력사항2</th>
+                        <th scope='col'>경력사항3</th>
+                        <th scope='col'>경력사항4</th>
+                        <th scope='col'>경력사항5</th>
+                        <th scope='col'>자격사항1</th>
+                        <th scope='col'>자격사항2</th>
+                        <th scope='col'>자격사항3</th>
+                        <th scope='col'>자격사항4</th>
+                        <th scope='col'>자격사항5</th>
+                        <th scope='col'>어학사항1</th>
+                        <th scope='col'>어학사항2</th>
+                        <th scope='col'>어학사항3</th>
+                        <th scope='col'>어학사항4</th>
+                        <th scope='col'>어학사항5</th>
+                    </tr>
+                </thead>
+                <tbody class="table_body">
+                </tbody>
+            </table>
+        </div>
+        <!--페이지네이션-->
+        <div class="position-relative">
+            <div class="position-absolute top-50 start-50 translate-middle">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination"></ul>
+                </nav>
+            </div>
+            </br>
+            </br>
+        </div>
+        <div class="container text-center">
+            <h1 id="main_title"></h1>
+        </div>
+    </div>
+</div>
+</br>
+<script>
+    $(document).ready(function reqAjax() {
+        var currentPage = window.location.href.split("/")
+        if (currentPage[5] == ""){currentPage = 1;}
+        else {currentPage = currentPage[5].substr(6)}
+        $.ajax({
+            url:'/erp/api/Incumbent/?page='+currentPage
+            , method : 'GET'
+            , dataType:"json"
+            , success :  function(data){
+                // 총 페이지 계산
+                var totalCount = data["count"]
+                var totalPage = Math.ceil(totalCount / 10)
+
+                // 페이지 그룹
+                const pageCount = 5
+
+                let pageGroup = Math.ceil(currentPage / pageCount)
+                let lastNumber = pageGroup * pageCount // 5
+
+                if (lastNumber > totalPage) {lastNumber = totalPage}
+                let firstNumber = lastNumber - (pageCount - 1) // 1
+                if(firstNumber<=0){firstNumber=1}
+                const next = lastNumber + 1 // 6
+                const prev = firstNumber - 1 // 0
+
+                var page = ""
+                
+                // 이전 버튼
+                if(currentPage>5){
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}">이전</a></li>`
+                }
+                // 1~5만큼 페이지네이션 그려줌
+                for (let i = firstNumber; i <= lastNumber; i++) {
+                page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}">${i}</a></li>`
+                }
+                // 다음 버튼
+                if(currentPage!=totalPage){
+                page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}">다음</a></li>`
+                }
+                $('.pagination').append(page);
+
+                str = '<TR>';
+
+                let end_data = data["results"].length
+
+                for(var j = 0; j < end_data; j++){
+                    str +=  '<TD> '+ data["results"][j].사번 + '</TD>' +
+                        '<TD>' + data["results"][j].구분 + '</TD>' + 
+                        '<TD>' + data["results"][j].이름 + '</TD>' +
+                        '<TD>' + data["results"][j].영문이름 + '</TD>' +
+                        '<TD>' + data["results"][j].근무지 + '</TD>' +
+                        '<TD>' + data["results"][j].부서 + '</TD>' +
+                        '<TD>' + data["results"][j].팀 + '</TD>' +
+                        '<TD>' + data["results"][j].직급 + '</TD>' +
+                        '<TD>' + data["results"][j].직책 + '</TD>' +
+                        '<TD>' + data["results"][j].입사일 + '</TD>' +
+                        '<TD>' + data["results"][j].근속일 + '</TD>' +
+                        '<TD>' + data["results"][j].주민등록번호 + '</TD>' +
+                        '<TD>' + data["results"][j].생년월일 + '</TD>' +
+                        '<TD>' + data["results"][j].연락처 + '</TD>' +
+                        '<TD>' + data["results"][j].비상연락망 + '</TD>' +
+                        '<TD>' + data["results"][j].회사_이메일 + '</TD>' +
+                        '<TD>' + data["results"][j].개인_이메일 + '</TD>' +
+                        '<TD>' + data["results"][j].주소 + '</TD>' +
+                        '<TD>' + data["results"][j].최종학력 + '</TD>' +
+                        '<TD>' + data["results"][j].학위 + '</TD>' +
+                        '<TD>' + data["results"][j].학교 + '</TD>' +
+                        '<TD>' + data["results"][j].전공 + '</TD>' +
+                        '<TD>' + data["results"][j].학점 + '</TD>' +
+                        '<TD>' + data["results"][j].입사구분 + '</TD>' +
+                        '<TD>' + data["results"][j].경력사항1 + '</TD>' +
+                        '<TD>' + data["results"][j].경력사항2 + '</TD>' +
+                        '<TD>' + data["results"][j].경력사항3 + '</TD>' +
+                        '<TD>' + data["results"][j].경력사항4 + '</TD>' +
+                        '<TD>' + data["results"][j].경력사항5 + '</TD>' +
+                        '<TD>' + data["results"][j].자격사항1 + '</TD>' +
+                        '<TD>' + data["results"][j].자격사항2 + '</TD>' +
+                        '<TD>' + data["results"][j].자격사항3 + '</TD>' +
+                        '<TD>' + data["results"][j].자격사항4 + '</TD>' +
+                        '<TD>' + data["results"][j].자격사항5 + '</TD>' +
+                        '<TD>' + data["results"][j].어학사항1 + '</TD>' +
+                        '<TD>' + data["results"][j].어학사항2 + '</TD>' +
+                        '<TD>' + data["results"][j].어학사항3 + '</TD>' +
+                        '<TD>' + data["results"][j].어학사항4 + '</TD>' +
+                        '<TD>' + data["results"][j].어학사항5 + '</TD>';
+                    str += '</TR>';
+                }
+                // 데이터 확인
+                console.log("가져오기 성공");
+                console.log(data);
+                console.log("첫번째 페이지 : " + firstNumber);
+                console.log("마지막 페이지 : " + lastNumber);
+                console.log("데이터 개수 : " + totalCount);
+                console.log("현재 페이지 : " + currentPage);
+                console.log("전체 페이지 : " + totalPage);
+
+                $('.table_body').append(str);
+
+            },
+            error: function(result) {
+                $('#main_title').append("로그인이 필요합니다 !");
+            }
+
+        })
+
+    })
+</script>
+
+{% endblock %}
