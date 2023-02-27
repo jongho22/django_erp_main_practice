@@ -20,6 +20,9 @@ def productDetail(request,pk) :
 def incumbent(request) :
     return render(request,'incumbent.html')
 
+def incumbent_upload(request) :
+    return render(request,'incumbent_upload.html')
+
 def login(request) :
     return render(request,'login.html')
 

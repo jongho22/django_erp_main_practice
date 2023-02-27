@@ -1,4 +1,4 @@
-from ..models import Product, COA, User, Department, Incumbent
+from ..models import Product, COA, User, Department, Incumbent, IncumbentUpdate, Retiree
 from rest_framework import serializers
 
 class ProductSerializer(serializers.ModelSerializer) :
@@ -23,6 +23,16 @@ class Department_Serializer(serializers.ModelSerializer) :
 class Incumbent_Serializer(serializers.ModelSerializer) :
     class Meta :
         model = Incumbent
+        fields = '__all__'
+
+class Incumbent_Upload_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = IncumbentUpdate
+        fields = '__all__'
+
+class Retiree_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Retiree
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):

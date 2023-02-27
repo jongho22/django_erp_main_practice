@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-7" >
+        <form id="form" name = "form" enctype="multipart/form-data">
+            {% csrf_token %} 
+            
+            <input type="file" name="upfile" id="upfile"></input>
+
+            <button class="btn btn-success" type="submit" onclick="formSubmit()">추가</button>
+        </form>
+    </div>
+    <div class="col-5">
+    </div>
+</div>
+<script>
+    function formSubmit() {
+        const fileInput = $("#upfile")[0];
+        console.log("fileInput: ", fileInput.files)
+
+        const formData = new FormData();
+        formData.append("upfile", fileInput.files[0]);
+
+        $.ajax({
+            url: '/erp/api/IncumbentUpdate/',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            data: formData,
+        
+            success: function (result) {
+                const message = rtn.data.values[0];
+                console.log("message: ", message)
+            }
+        });
+    }
+</script>
+{% endblock %}

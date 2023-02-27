@@ -38,6 +38,11 @@ class COA (models.Model) :
 class Department(models.Model) :
     부서이름 = models.CharField(primary_key=True,max_length=10)
 
+# 재직자 엑셀 업로드
+class IncumbentUpdate(models.Model) :
+    #no = models.AutoField(db_column='no', primary_key=True)
+    upfile = models.FileField(blank=True, null=True, upload_to="uploads")
+
 # 재직자 모델
 class Incumbent(models.Model) :
     사번 = models.IntegerField(primary_key=True)
@@ -62,7 +67,7 @@ class Incumbent(models.Model) :
     학위 = models.CharField(max_length=10,null=True,blank=True)
     학교 = models.CharField(max_length=10,null=True,blank=True)
     전공 = models.CharField(max_length=10,null=True,blank=True)
-    학점 = models.CharField(max_length=10,null=True,blank=True)
+    학점 = models.CharField(max_length=20,null=True,blank=True)
     입사구분 = models.CharField(max_length=10,null=True,blank=True)
     경력사항1 = models.CharField(max_length=10,null=True,blank=True)
     경력사항2 = models.CharField(max_length=10,null=True,blank=True)
@@ -81,6 +86,46 @@ class Incumbent(models.Model) :
     어학사항5 = models.CharField(max_length=10,null=True,blank=True)
 
 # 퇴직자 모델
+class Retiree(models.Model) :
+    사번 = models.IntegerField(primary_key=True)
+    구분 = models.CharField(max_length=4)
+    이름 = models.CharField(max_length=10)
+    영문이름 = models.CharField(max_length=20)
+    근무지 = models.CharField(max_length=5)
+    부서 = models.CharField(max_length=10,null=True,blank=True)
+    팀 = models.CharField(max_length=5)
+    직급 = models.CharField(max_length=5)
+    직책 = models.CharField(max_length=5,null=True,blank=True)
+    입사일 = models.DateField(null=True,blank=True)
+    근속일 = models.IntegerField(blank=True)
+    주민등록번호 = models.CharField(max_length=20,null=True,blank=True)
+    생년월일 = models.DateField(null=True,blank=True)
+    연락처 = models.CharField(max_length=20,null=True,blank=True)
+    비상연락망 = models.CharField(max_length=20,null=True,blank=True)
+    회사_이메일 = models.EmailField(null=True,blank=True)
+    개인_이메일 = models.EmailField(null=True,blank=True)
+    주소 = models.TextField(null=True,blank=True)
+    최종학력 = models.CharField(max_length=10,null=True,blank=True)
+    학위 = models.CharField(max_length=10,null=True,blank=True)
+    학교 = models.CharField(max_length=10,null=True,blank=True)
+    전공 = models.CharField(max_length=10,null=True,blank=True)
+    학점 = models.CharField(max_length=20,null=True,blank=True)
+    입사구분 = models.CharField(max_length=10,null=True,blank=True)
+    경력사항1 = models.CharField(max_length=10,null=True,blank=True)
+    경력사항2 = models.CharField(max_length=10,null=True,blank=True)
+    경력사항3 = models.CharField(max_length=10,null=True,blank=True)
+    경력사항4 = models.CharField(max_length=10,null=True,blank=True)
+    경력사항5 = models.CharField(max_length=10,null=True,blank=True)
+    자격사항1 = models.CharField(max_length=10,null=True,blank=True)
+    자격사항2 = models.CharField(max_length=10,null=True,blank=True)
+    자격사항3 = models.CharField(max_length=10,null=True,blank=True)
+    자격사항4 = models.CharField(max_length=10,null=True,blank=True)
+    자격사항5 = models.CharField(max_length=10,null=True,blank=True)
+    어학사항1 = models.CharField(max_length=10,null=True,blank=True)
+    어학사항2 = models.CharField(max_length=10,null=True,blank=True)
+    어학사항3 = models.CharField(max_length=10,null=True,blank=True)
+    어학사항4 = models.CharField(max_length=10,null=True,blank=True)
+    어학사항5 = models.CharField(max_length=10,null=True,blank=True)
 
 # 유저 관리 
 class UserManager(BaseUserManager):
