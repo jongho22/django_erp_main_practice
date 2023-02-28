@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .api.views import ProductViewset,COA_Viewset,UserCreate,Department_Viewset,Incumbent_Viewset,IncumbentUpdate_Viewset,Retiree_Viewset,IncumbentUpdate_Detail_Viewset
+from .api.views import ProductViewset,COA_Viewset,UserCreate,Department_Viewset,Incumbent_Viewset,IncumbentUpdate_Viewset,IncumbentUpdate_Detail_Viewset
 from rest_framework.routers import DefaultRouter
 from . import views
 from django.conf.urls.static import static
@@ -13,7 +13,6 @@ router.register('COA', COA_Viewset, basename='COA')
 router.register('Department',Department_Viewset,basename='Department')
 router.register('Incumbent',Incumbent_Viewset,basename='Incumbent')
 #router.register('IncumbentUpdate',IncumbentUpdate_Viewset, basename='IncumbentUpdate')
-router.register('Retiree',Retiree_Viewset, basename='Retiree')
 
 
 urlpatterns = [
@@ -37,8 +36,13 @@ urlpatterns = [
 
     # 재직자
     path('incumbent/',views.incumbent),
+    path('incumbent/<int:pk>/',views.incumbentDetail),
     path('incumbent_upload/',views.incumbent_upload),
     
+    # 퇴직자
+    path('retiree/',views.retiree),
+    #path('retiree/<int:pk>/',views.retiree),
+
     # 로그인
     path('login/',views.login),
     path('register/',views.register),

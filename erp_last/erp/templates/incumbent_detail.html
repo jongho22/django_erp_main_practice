@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <form id="form" name = "form" method="POST">
+        {% csrf_token %}
+        <div class="container text-center">
+            <h1></h1>
+            <hr>
+            <div class="row row-cols-2">
+                <p>사번 : </p> 
+                <input type="number" id ="사번" name="사번"></input>
+                <p>구분 : </p> 
+                <input type="text" id ="구분" name="구분"></input>
+                <p>이름 : </p> 
+                <input type="text" id ="이름" name="이름"></input>
+                <p>영문이름 : </p> 
+                <input type="text" id ="영문이름" name="영문이름"></input>
+                <p>근무지 : </p>  
+                <input type="text" id ="근무지" name="근무지"></input>
+                <p>부서 : </p>  
+                <input type="text" id ="부서" name="부서"></input>
+                <p>팀 : </p>  
+                <input type="text" id ="팀" name='팀'></input>
+                <p>직급 : </p>  
+                <input type="text" id ="직급" name='직급'></input>
+                <p>직책 : </p>  
+                <input type="text" id ="직책" name='직책'></input>
+                <p>입사일 : </p>  
+                <input type="text" id ="직책" name='직책'></input>
+                <p>근속일 : </p>  
+                <input type="text" id ="근속일" name='근속일'></input>
+            </div>
+            
+           
+        </div>
+    </form>
+</div>
+{% endblock %}

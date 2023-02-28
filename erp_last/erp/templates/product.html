@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<style>
+    th {
+        overflow:hidden; white-space : nowrap; text-overflow: ellipsis;
+    }
+</style>
 <div class="row">
     
     <div class="col-8" >
@@ -25,31 +29,26 @@
                         <th scope='col'>급여</th>
                         <th scope='col'>구분</th>
                         <th scope='col'>성문코드</th>
-            
                     </tr>
-                    
                 </thead>
                 <tbody class="table_body">
                 </tbody>
             </table>
         </div>
-    
-
         <!--페이지네이션-->
         <div class="position-relative">
             <div class="position-absolute top-50 start-50 translate-middle">
             <nav aria-label="Page navigation example">
                 <ul class="pagination"></ul>
             </nav>
-            
+    
+            </div>
+            </br>
+            </br>
         </div>
-        </br>
-        </br>
-    </div>
-    <div class="container text-center">
-        <h1 id="main_title"></h1>
-    </div>
-       
+        <div class="container text-center">
+            <h1 id="main_title"></h1>
+        </div>
     </div>
     <div class="col-4" >
         
@@ -193,17 +192,13 @@
                 str = '<TR>';
 
                 let end_data = data["results"].length
+
+                const list_col = ['제품코드','제품명','포장단위','제약사','보험코드','표준코드','기준가','급여','구분','성문코드']
+
                 for(var j = 0; j < end_data; j++){
-                    str +=  '<TD>'+ '<a href="/erp/product/' + data["results"][j].제품코드 + '">' + data["results"][j].제품코드 + '</TD>'+
-                            '<TD>' + data["results"][j].제품명 + '</TD>' + 
-                            '<TD>' + data["results"][j].포장단위 + '</TD>' +
-                            '<TD>' + data["results"][j].제약사 + '</TD>' +
-                            '<TD>' + data["results"][j].보험코드 + '</TD>' +
-                            '<TD>' + data["results"][j].표준코드 + '</TD>' +
-                            '<TD>' + data["results"][j].기준가 + '</TD>' + 
-                            '<TD>' + data["results"][j].급여 + '</TD>' +
-                            '<TD>' + data["results"][j].구분 + '</TD>' +
-                            '<TD>' + data["results"][j].성문코드 + '</TD>';
+                    for(c in list_col){
+                        str +=  '<TD '+ 'onClick="location.href='+"'/erp/product/"+ data["results"][j].제품코드 + "'" + '">' + data["results"][j][list_col[c]] + '</TD>';
+                    }
                     str += '</TR>';
                 }
                 // 데이터 확인

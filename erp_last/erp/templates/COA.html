@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<style>
+    th {
+        overflow:hidden; white-space : nowrap; text-overflow: ellipsis;
+    }
+</style>
 <div class="row">
     <div class="col-7" >
         </br>
@@ -165,15 +169,13 @@
                 str = '<TR>';
                 
                 let end_data = data["results"].length
+                
+                const list_col = ['코드','계정명','계정_대분류','계정_중분류','계정_소분류','재무제표','비고']
 
                 for(var j = 0; j < end_data; j++){
-                    str +=  '<TD> '+ '<a href="/erp/coa/' + data["results"][j].코드 + '">' + data["results"][j].코드 + '&nbsp</TD>' +
-                        '<TD>' + data["results"][j].계정명 + '</TD>' + 
-                        '<TD>' + data["results"][j].계정_대분류 + '</TD>' +
-                        '<TD>' + data["results"][j].계정_중분류 + '</TD>' +
-                        '<TD>' + data["results"][j].계정_소분류 + '</TD>' +
-                        '<TD>' + data["results"][j].재무제표 + '</TD>' +
-                        '<TD>' + data["results"][j].비고 + '</TD>';
+                    for(c in list_col){
+                        str +=  '<TD '+ 'onClick="location.href='+"'/erp/coa/"+ data["results"][j].코드 + "'" + '">' + data["results"][j][list_col[c]] + '</TD>';
+                    }
                     str += '</TR>';
                 }
                 // 데이터 확인

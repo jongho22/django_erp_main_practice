@@ -10,7 +10,7 @@
     <div class="col-7">
         </br>
         <div class="container">
-            <h1>중헌제약 재직자 명단 [<a href="../incumbent_upload">엑셀 업로드</a>]</h1>
+            <h1>중헌제약 퇴직자 명단</h1>
         </div>
         <div class="container">
             <table class="table table-hover">
@@ -86,7 +86,7 @@
         if (currentPage[5] == ""){currentPage = 1;}
         else {currentPage = currentPage[5].substr(6)}
         $.ajax({
-            url:'/erp/api/Incumbent/?page=' + currentPage + '&개인_이메일=&경력사항1=&경력사항2=&경력사항3=&경력사항4=&경력사항5=&구분=&근무지=&근속일=&부서=&비상연락망=&사번=&생년월일=&어학사항1=&어학사항2=&어학사항3=&어학사항4=&어학사항5=&연락처=&영문이름=&이름=&입사구분=&입사일=&자격사항1=&자격사항2=&자격사항3=&자격사항4=&자격사항5=&전공=&주민등록번호=&주소=&직급=&직책=&최종학력=&퇴직여부=false&팀=&학교=&학위=&학점=&회사_이메일='
+            url:'/erp/api/Incumbent/?page='+ currentPage +'&개인_이메일=&경력사항1=&경력사항2=&경력사항3=&경력사항4=&경력사항5=&구분=&근무지=&근속일=&부서=&비상연락망=&사번=&생년월일=&어학사항1=&어학사항2=&어학사항3=&어학사항4=&어학사항5=&연락처=&영문이름=&이름=&입사구분=&입사일=&자격사항1=&자격사항2=&자격사항3=&자격사항4=&자격사항5=&전공=&주민등록번호=&주소=&직급=&직책=&최종학력=&퇴직여부=true&팀=&학교=&학위=&학점=&회사_이메일='
             , method : 'GET'
             , dataType:"json"
             , success :  function(data){
@@ -131,7 +131,9 @@
                 '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5']; 
                 
                 for(var j = 0; j < end_data; j++){
+                    
                     for(c in list_col){
+                        //console.log(data["results"][j].c)
                         str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+data["results"][j][list_col[c]] + '</TD>';
                     }
                     str += '</TR>';

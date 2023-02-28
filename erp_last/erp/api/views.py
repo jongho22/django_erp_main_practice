@@ -1,5 +1,5 @@
-from ..models import Product, COA,User,Department,Incumbent,IncumbentUpdate,Retiree
-from .serializers import ProductSerializer,COA_Serializer,UserSerializer,Department_Serializer,Incumbent_Serializer,Incumbent_Upload_Serializer,Retiree_Serializer
+from ..models import Product, COA,User,Department,Incumbent,IncumbentUpdate
+from .serializers import ProductSerializer,COA_Serializer,UserSerializer,Department_Serializer,Incumbent_Serializer,Incumbent_Upload_Serializer
 
 from rest_framework import viewsets
 from rest_framework import generics
@@ -10,6 +10,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+
+from django_filters.rest_framework import DjangoFilterBackend,FilterSet,CharFilter,NumberFilter,BooleanFilter
+from rest_framework.filters import SearchFilter
 
 # 인증 
 #from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -60,7 +63,9 @@ class Incumbent_Viewset(viewsets.ModelViewSet) :
 
     queryset = Incumbent.objects.all()
     serializer_class = Incumbent_Serializer
-
+    filter_backends = [DjangoFilterBackend,SearchFilter]
+    filterset_fields = ['사번','구분','이름','영문이름','근무지','부서','팀','직급','직책','입사일','근속일','주민등록번호','생년월일','연락처','비상연락망','회사_이메일','개인_이메일','주소','최종학력','학위','학교','전공','학점','입사구분','경력사항1','경력사항2','경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5','퇴직여부']
+    search_fields = ['사번']
 
 # 재직자 엑셀 파일을 통한 DB에 입력 구현
 class IncumbentUpdate_Viewset(APIView):
@@ -106,14 +111,6 @@ class IncumbentUpdate_Detail_Viewset(APIView):
         snippet = self.get_object(pk)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-# 퇴직자 
-class Retiree_Viewset(viewsets.ModelViewSet):
-    # permission 추가
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Retiree.objects.all()
-    serializer_class = Retiree_Serializer
 
 # 회원가입
 class UserCreate(generics.CreateAPIView):
