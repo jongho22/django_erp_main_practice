@@ -55,6 +55,7 @@
                         <th scope='col'>어학사항3</th>
                         <th scope='col'>어학사항4</th>
                         <th scope='col'>어학사항5</th>
+                        <th scope='col'>옵션</th>
                     </tr>
                 </thead>
                 <tbody class="table_body">
@@ -131,12 +132,23 @@
                 '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5']; 
                 
                 for(var j = 0; j < end_data; j++){
-                    
                     for(c in list_col){
-                        //console.log(data["results"][j].c)
-                        str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+data["results"][j][list_col[c]] + '</TD>';
+                        str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+ data["results"][j][list_col[c]] + '</TD>';
                     }
-                    str += '</TR>';
+                    str = str + '<TD>'
+                        + '<div class="dropdown">' 
+                        +   '<a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>' 
+                        +   '<ul class="dropdown-menu">'
+                        +       '<li>'
+                        +           '<a class="dropdown-item" href="/erp/incumbent/'+ data["results"][j].사번 +'">복직</a>'
+                        +       '</li>'
+                        +       '<li>'
+                        +           '<a class="dropdown-item" href="#">영구삭제</a>'
+                        +       '</li>'
+                        +   '</ul>'
+                        +  '</div>' 
+                        + '</TD>' 
+                        + '</TR>';
                 }
                 // 데이터 확인
                 console.log("가져오기 성공");

@@ -12,6 +12,7 @@
         <div class="container">
             <h1>중헌제약 재직자 명단 [<a href="../incumbent_upload">엑셀 업로드</a>]</h1>
         </div>
+        </br></br>
         <div class="container">
             <table class="table table-hover">
                 <thead>
@@ -55,6 +56,7 @@
                         <th scope='col'>어학사항3</th>
                         <th scope='col'>어학사항4</th>
                         <th scope='col'>어학사항5</th>
+                        <th scope='col'>옵션</th>
                     </tr>
                 </thead>
                 <tbody class="table_body">
@@ -86,7 +88,10 @@
         if (currentPage[5] == ""){currentPage = 1;}
         else {currentPage = currentPage[5].substr(6)}
         $.ajax({
-            url:'/erp/api/Incumbent/?page=' + currentPage + '&개인_이메일=&경력사항1=&경력사항2=&경력사항3=&경력사항4=&경력사항5=&구분=&근무지=&근속일=&부서=&비상연락망=&사번=&생년월일=&어학사항1=&어학사항2=&어학사항3=&어학사항4=&어학사항5=&연락처=&영문이름=&이름=&입사구분=&입사일=&자격사항1=&자격사항2=&자격사항3=&자격사항4=&자격사항5=&전공=&주민등록번호=&주소=&직급=&직책=&최종학력=&퇴직여부=false&팀=&학교=&학위=&학점=&회사_이메일='
+            url:'/erp/api/Incumbent/?page=' + currentPage + '&개인_이메일=&경력사항1=&경력사항2=&경력사항3=&경력사항4=&경력사항5='
+            +  '&구분=&근무지=&근속일=&부서=&비상연락망=&사번=&생년월일=&어학사항1=&어학사항2=&어학사항3=&어학사항4=&어학사항5=&연락처='
+            +  '&영문이름=&이름=&입사구분=&입사일=&자격사항1=&자격사항2=&자격사항3=&자격사항4=&자격사항5=&전공=&주민등록번호=&주소=&직급='
+            +  '&직책=&최종학력=&퇴직여부=false&팀=&학교=&학위=&학점=&회사_이메일='
             , method : 'GET'
             , dataType:"json"
             , success :  function(data){
@@ -122,19 +127,31 @@
                 }
                 $('.pagination').append(page);
 
-                str = '<TR>';
-
                 let end_data = data["results"].length
-
 
                 const list_col = ['사번','구분','이름','영문이름','근무지','부서','팀','직급','직책','입사일','근속일','주민등록번호','생년월일','연락처','비상연락망','회사_이메일','개인_이메일','주소','최종학력','학위','학교','전공','학점','입사구분','경력사항1','경력사항2',
                 '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5']; 
                 
+                str = '<TR>';
+        
                 for(var j = 0; j < end_data; j++){
                     for(c in list_col){
-                        str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+data["results"][j][list_col[c]] + '</TD>';
+                        str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+ data["results"][j][list_col[c]] + '</TD>';
                     }
-                    str += '</TR>';
+                    str = str + '<TD>'
+                        + '<div class="dropdown">' 
+                        +   '<a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>' 
+                        +   '<ul class="dropdown-menu">'
+                        +       '<li>'
+                        +           '<a class="dropdown-item" href="/erp/incumbent/'+ data["results"][j].사번 +'">수정</a>'
+                        +       '</li>'
+                        +       '<li>'
+                        +           '<a class="dropdown-item" href="#">퇴직</a>'
+                        +       '</li>'
+                        +   '</ul>'
+                        +  '</div>' 
+                        + '</TD>' 
+                        + '</TR>';
                 }
                 // 데이터 확인
                 console.log("가져오기 성공");

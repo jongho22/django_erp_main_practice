@@ -2,38 +2,120 @@
 
 {% block content %}
 <div class="container">
-    <form id="form" name = "form" method="POST">
+    <form id="form" name = "form">
         {% csrf_token %}
-        <div class="container text-center">
+        <div class="container">
+            </br>
             <h1></h1>
-            <hr>
-            <div class="row row-cols-2">
-                <p>사번 : </p> 
-                <input type="number" id ="사번" name="사번"></input>
-                <p>구분 : </p> 
-                <input type="text" id ="구분" name="구분"></input>
-                <p>이름 : </p> 
-                <input type="text" id ="이름" name="이름"></input>
-                <p>영문이름 : </p> 
-                <input type="text" id ="영문이름" name="영문이름"></input>
-                <p>근무지 : </p>  
-                <input type="text" id ="근무지" name="근무지"></input>
-                <p>부서 : </p>  
-                <input type="text" id ="부서" name="부서"></input>
-                <p>팀 : </p>  
-                <input type="text" id ="팀" name='팀'></input>
-                <p>직급 : </p>  
-                <input type="text" id ="직급" name='직급'></input>
-                <p>직책 : </p>  
-                <input type="text" id ="직책" name='직책'></input>
-                <p>입사일 : </p>  
-                <input type="text" id ="직책" name='직책'></input>
-                <p>근속일 : </p>  
-                <input type="text" id ="근속일" name='근속일'></input>
+            </br>
+            <hr>      
+            <div id='add' class="row row-cols-2">
+                <!--입력창-->
             </div>
-            
-           
+            <div class="container text-center">
+                <hr>
+                <div class="row-cols-2">
+                    <button class="btn btn-dark" type="submit" onclick="formChange()">수정</button>
+                </div>
+            </div>
         </div>
     </form>
+    <div class="container text-center">
+        </br>
+        <div class="row-cols-2">
+            <button class="btn btn-danger" onclick="formDelete()" >퇴직</button>
+        </div>
+    </div>
+    </br></br>
 </div>
+
+<script>
+$(document).ready(function reqAjax() {
+    var code = window.location.href.split("/")
+    
+    $.ajax({
+        url:'/erp/api/Incumbent/' + code[5]
+        , method : 'GET'
+        , dataType:"json"
+        , success :  function(data){
+            const list_col = ['사번','구분','이름','영문이름','근무지','부서','팀','직급','직책','입사일','근속일','주민등록번호','생년월일','연락처','비상연락망','회사_이메일','개인_이메일','주소','최종학력','학위','학교','전공','학점','입사구분','경력사항1','경력사항2',
+            '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5','퇴직여부']; 
+
+            str = ""
+            
+            for(c in list_col){
+                if(list_col[c]=='사번'){
+                    str += '<p>'+ list_col[c]  +' : </p>'
+                 + '<input type="number" id ="'+ list_col[c] + '" name="'+ list_col[c] + '"></input>';
+                }
+                else if(list_col[c]=='생년월일'){
+                    str += '<p>'+ list_col[c]  +' : </p>'
+                 + '<input type="date" id ="'+ list_col[c] + '" name="'+ list_col[c] + '"></input>';
+                }
+                else if(list_col[c]=='입사일'){
+                    str += '<p>'+ list_col[c]  +' : </p>'
+                 + '<input type="date" id ="'+ list_col[c] + '" name="'+ list_col[c] + '"></input>';
+                }
+                else if(list_col[c]=='회사_이메일'){
+                    str += '<p>'+ list_col[c]  +' : </p>'
+                 + '<input type="email" id ="'+ list_col[c] + '" name="'+ list_col[c] + '"></input>';
+                }
+                else if(list_col[c]=='개인_이메일'){
+                    str += '<p>'+ list_col[c]  +' : </p>'
+                 + '<input type="email" id ="'+ list_col[c] + '" name="'+ list_col[c] + '"></input>';
+                }
+                else{
+                 str += '<p>'+ list_col[c]  +' : </p>'
+                 + '<input type="text" id ="'+ list_col[c] + '" name="'+ list_col[c] + '"></input>';
+                }
+            }
+            $('#add').append(str);
+            $("h1").append("<b>사번 : ["+ data['사번'] +"]</b>" + " [수정 페이지]");
+            for(c in list_col){
+                $("input#"+ list_col[c]).attr('value',data[list_col[c]]);
+            }
+        }
+    })
+})
+
+$.ajaxSetup({
+    headers: { "X-CSRFToken": '{{csrf_token}}' }
+});
+
+function formChange() {
+    var code = window.location.href.split("/")
+    var params = $("#form").serialize();
+    
+    $.ajax({
+        url:'/erp/api/Incumbent/' + code[5] + "/"
+        , method : 'PUT'
+        , data:params
+        , contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
+        , dataType: 'html'
+        , success : function(){
+            var link = '/erp/Incumbent/' + code[5];
+            location.replace(link);
+        }
+    })
+    
+}
+
+function formDelete() {
+    var code = window.location.href.split("/")
+    $("input#퇴직여부").attr('value','true');
+    var params = jQuery("#form").serialize();
+
+    $.ajax({
+        url:'/erp/api/Incumbent/' + code[5] + "/"
+        , method : 'PUT'
+        , data:params
+        , contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
+        , dataType: 'html'
+        , success : function(){
+            var link = '/erp/incumbent/' + code[5];
+            location.replace(link);
+        }
+    })
+}
+</script>
 {% endblock %}
