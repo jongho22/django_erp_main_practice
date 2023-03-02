@@ -111,9 +111,10 @@ function formDelete() {
         , data:params
         , contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
         , dataType: 'html'
-        , success : function(){
-            var link = '/erp/incumbent/' + code[5];
+        , success : function(data){
+            var link = '/erp/incumbent/';
             location.replace(link);
+            alert(`${$('#이름').val()}님의 퇴직 처리 되었습니다.`)
         }
     })
 }

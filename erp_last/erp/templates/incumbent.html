@@ -11,6 +11,12 @@
         </br>
         <div class="container">
             <h1>중헌제약 재직자 명단 [<a href="../incumbent_upload">엑셀 업로드</a>]</h1>
+            </br>
+            <div class="container-fluid">
+                <input id="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search"></input>
+                <button class="btn btn-outline-success" type="submit" onclick="search()">검색</button>
+                <h3 id="search_show"></h3>
+            </div>
         </div>
         </br></br>
         <div class="container">
@@ -83,18 +89,36 @@
 </div>
 </br>
 <script>
-    $(document).ready(function reqAjax() {
+    function search() {
+        var search_keyword = $('#search').val();
+        location.replace(`/erp/incumbent/?page=1&search=${search_keyword}&퇴직여부=false`);
+        reqAjax()
+    }
+
+    function reqAjax() {
         var currentPage = window.location.href.split("/")
         if (currentPage[5] == ""){currentPage = 1;}
-        else {currentPage = currentPage[5].substr(6)}
+        else {currentPage = currentPage[5].substr(6).split("&")[0]}
+
+        // 검색어 쿼리 찾기
+        search_keyword = window.location.href.split("/")[5].substr(6).split("&")[1].substr(7);
+        //$('.search').val() = search_keyword;
+        // 요청 url 
+        api_url = `/erp/api/Incumbent/?page=${currentPage}&search=${search_keyword}&퇴직여부=false`
+        
+
+        $('#search_show').append(`검색어 : ${decodeURI(search_keyword)}`)
+
+        console.log(search_keyword)
         $.ajax({
-            url:'/erp/api/Incumbent/?page=' + currentPage + '&개인_이메일=&경력사항1=&경력사항2=&경력사항3=&경력사항4=&경력사항5='
-            +  '&구분=&근무지=&근속일=&부서=&비상연락망=&사번=&생년월일=&어학사항1=&어학사항2=&어학사항3=&어학사항4=&어학사항5=&연락처='
-            +  '&영문이름=&이름=&입사구분=&입사일=&자격사항1=&자격사항2=&자격사항3=&자격사항4=&자격사항5=&전공=&주민등록번호=&주소=&직급='
-            +  '&직책=&최종학력=&퇴직여부=false&팀=&학교=&학위=&학점=&회사_이메일='
+            url: api_url
             , method : 'GET'
             , dataType:"json"
             , success :  function(data){
+
+                $('.table_body').empty()
+                $('.pagination').empty()
+
                 // 총 페이지 계산
                 var totalCount = data["count"]
                 var totalPage = Math.ceil(totalCount / 10)
@@ -107,6 +131,7 @@
 
                 if (lastNumber > totalPage) {lastNumber = totalPage}
                 let firstNumber = lastNumber - (pageCount - 1) // 1
+                
                 if(firstNumber<=0){firstNumber=1}
                 const next = lastNumber + 1 // 6
                 const prev = firstNumber - 1 // 0
@@ -115,15 +140,15 @@
                 
                 // 이전 버튼
                 if(currentPage>5){
-                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}">이전</a></li>`
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}&search=${search_keyword}&퇴직여부=false">이전</a></li>`
                 }
                 // 1~5만큼 페이지네이션 그려줌
                 for (let i = firstNumber; i <= lastNumber; i++) {
-                page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}">${i}</a></li>`
+                    page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}&search=${search_keyword}&퇴직여부=false">${i}</a></li>`
                 }
                 // 다음 버튼
                 if(currentPage!=totalPage){
-                page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}">다음</a></li>`
+                    page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}&search=${search_keyword}&퇴직여부=false">다음</a></li>`
                 }
                 $('.pagination').append(page);
 
@@ -136,22 +161,29 @@
         
                 for(var j = 0; j < end_data; j++){
                     for(c in list_col){
-                        str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+ data["results"][j][list_col[c]] + '</TD>';
+                        if(`${data["results"][j][list_col[c]]}`=="null"){
+                            str +=  `<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;"> </TD>`;
+                        }
+                        else{
+                            str +=  `<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;"> ${data["results"][j][list_col[c]]} </TD>`;
+                        }
                     }
-                    str = str + '<TD>'
-                        + '<div class="dropdown">' 
-                        +   '<a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>' 
-                        +   '<ul class="dropdown-menu">'
-                        +       '<li>'
-                        +           '<a class="dropdown-item" href="/erp/incumbent/'+ data["results"][j].사번 +'">수정</a>'
-                        +       '</li>'
-                        +       '<li>'
-                        +           '<a class="dropdown-item" href="#">퇴직</a>'
-                        +       '</li>'
-                        +   '</ul>'
-                        +  '</div>' 
-                        + '</TD>' 
-                        + '</TR>';
+                    str = str + 
+                    `<TD>
+                        <div class="dropdown">
+                            <a class="btn btn-danger dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>
+                            <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/erp/incumbent/${data["results"][j].사번}">수정</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" onclick="formDelete(${data["results"][j].사번},'${data["results"][j].이름}')">퇴직</a>
+                            </li>
+                            </ul>
+                        </div> 
+                    </TD>
+                    </TR>`;
                 }
                 // 데이터 확인
                 console.log("가져오기 성공");
@@ -162,15 +194,37 @@
                 console.log("현재 페이지 : " + currentPage);
                 console.log("전체 페이지 : " + totalPage);
 
-                $('.table_body').append(str);
+                //console.log("검색어 : " + search_keyword);
 
+                $('.table_body').append(str);
             },
             error: function(result) {
                 $('#main_title').append("로그인이 필요합니다 !");
             }
-
         })
+    }
 
-    })
+    $(document).ready(reqAjax())
+
+    function formDelete(worker_number,name) {
+        var data2 = {'퇴직여부' : true};
+        
+        $.ajax({
+            url:`/erp/api/Incumbent/${worker_number}/`
+            , method : 'PATCH'
+            , data: JSON.stringify(data2)
+            , contentType: 'application/json; charset=UTF-8'
+            , dataType: 'json'
+            , success : function(){
+                location.replace('/erp/incumbent')
+                alert(`${name}님의 퇴직 처리가 완료 되었습니다.`)
+            }
+        })
+    }
+
+    function download() {
+        
+    }
+
 </script>
 {% endblock %}

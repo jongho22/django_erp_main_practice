@@ -55,6 +55,7 @@
                         <th scope='col'>어학사항3</th>
                         <th scope='col'>어학사항4</th>
                         <th scope='col'>어학사항5</th>
+                        <th scope='col'>퇴직여부</th>
                         <th scope='col'>옵션</th>
                     </tr>
                 </thead>
@@ -66,28 +67,25 @@
             <h1 id="main_title"></h1>
         </div>
     </div>
-    <div class="col-5">
+    <div class="col-5"></div>
 
-    </div>
     <!--페이지네이션-->
     <div class="position-relative">
         <div class="position-absolute top-50 start-50 translate-middle">
             <nav aria-label="Page navigation example">
                 <ul class="pagination"></ul>
             </nav>
-        </div>
-        </br>
-        </br>
+        </div></br></br>
     </div>
-</div>
-</br>
+</div></br>
+
 <script>
     $(document).ready(function reqAjax() {
         var currentPage = window.location.href.split("/")
         if (currentPage[5] == ""){currentPage = 1;}
         else {currentPage = currentPage[5].substr(6)}
         $.ajax({
-            url:'/erp/api/Incumbent/?page='+ currentPage +'&개인_이메일=&경력사항1=&경력사항2=&경력사항3=&경력사항4=&경력사항5=&구분=&근무지=&근속일=&부서=&비상연락망=&사번=&생년월일=&어학사항1=&어학사항2=&어학사항3=&어학사항4=&어학사항5=&연락처=&영문이름=&이름=&입사구분=&입사일=&자격사항1=&자격사항2=&자격사항3=&자격사항4=&자격사항5=&전공=&주민등록번호=&주소=&직급=&직책=&최종학력=&퇴직여부=true&팀=&학교=&학위=&학점=&회사_이메일='
+            url:'/erp/api/Incumbent/?page='+ currentPage +'&퇴직여부=true'
             , method : 'GET'
             , dataType:"json"
             , success :  function(data){
@@ -127,28 +125,29 @@
 
                 let end_data = data["results"].length
 
-
                 const list_col = ['사번','구분','이름','영문이름','근무지','부서','팀','직급','직책','입사일','근속일','주민등록번호','생년월일','연락처','비상연락망','회사_이메일','개인_이메일','주소','최종학력','학위','학교','전공','학점','입사구분','경력사항1','경력사항2',
-                '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5']; 
+                '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5','퇴직여부']; 
                 
                 for(var j = 0; j < end_data; j++){
                     for(c in list_col){
                         str +=  '<TD style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">'+ data["results"][j][list_col[c]] + '</TD>';
                     }
-                    str = str + '<TD>'
-                        + '<div class="dropdown">' 
-                        +   '<a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>' 
-                        +   '<ul class="dropdown-menu">'
-                        +       '<li>'
-                        +           '<a class="dropdown-item" href="/erp/incumbent/'+ data["results"][j].사번 +'">복직</a>'
-                        +       '</li>'
-                        +       '<li>'
-                        +           '<a class="dropdown-item" href="#">영구삭제</a>'
-                        +       '</li>'
-                        +   '</ul>'
-                        +  '</div>' 
-                        + '</TD>' 
-                        + '</TR>';
+                    str = str + 
+                    `<TD>
+                        <div class="dropdown">
+                            <a class="btn btn-danger dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" onclick="rework(${data["results"][j].사번})">복직</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" onclick="formDelete(${data["results"][j].사번},'${data["results"][j].이름}')">영구삭제</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </TD>
+                    </TR>`;
                 }
                 // 데이터 확인
                 console.log("가져오기 성공");
@@ -165,9 +164,35 @@
             error: function(result) {
                 $('#main_title').append("로그인이 필요합니다 !");
             }
-
         })
-
     })
+
+    function rework(worker_number) {
+
+        var data2 = {'퇴직여부' : false};
+        
+        $.ajax({
+            url:`/erp/api/Incumbent/${worker_number}/`
+            , method : 'PATCH'
+            , data: JSON.stringify(data2)
+            , contentType: 'application/json; charset=UTF-8'
+            , dataType: 'json'
+            , success : function(){
+                location.replace('/erp/retiree')
+            }
+        })
+    }
+
+    function formDelete(worker_number,name) {
+        
+        $.ajax({
+            url:`/erp/api/Incumbent/${worker_number}/`
+            , method : 'DELETE'
+            , success : function(){
+                location.replace('/erp/retiree')
+                alert(`${name}님의 영구 삭제 처리가 완료 되었습니다.`)
+            }
+        })
+    }
 </script>
 {% endblock %}
