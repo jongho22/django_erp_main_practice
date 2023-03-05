@@ -37,6 +37,7 @@ urlpatterns = [
     # 재직자
     path('incumbent/',views.incumbent),
     path('incumbent/<int:pk>/',views.incumbentDetail),
+    path('incumbent_download/',views.incumbent_download),
     path('incumbent_upload/',views.incumbent_upload),
     
     # 퇴직자

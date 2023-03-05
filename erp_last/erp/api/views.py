@@ -18,6 +18,12 @@ from drf_excel.mixins import XLSXFileMixin
 from drf_excel.renderers import XLSXRenderer
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+import pandas as pd
+
+from ..models import Incumbent
+
+import psycopg2
+from sqlalchemy import create_engine
 
 # 인증 
 #from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -95,6 +101,23 @@ class IncumbentUpdate_Viewset(APIView):
         if serializer.is_valid():
             serializer.save()
             print("파일을 변환 합니다.")
+
+            file_name = str(request.data.get('upfile'))
+            print(file_name)
+            
+            pd_data = pd.read_csv(f'./media/uploads/{file_name}',encoding="CP949")
+            conn = psycopg2.connect(database="erp_database", user="postgres", password="1234", host="localhost", port="")
+            #print(conn)
+            cur = conn.cursor()
+            #cur.execute("SELECT * FROM erp_incumbent;")
+            #rows = cur.fetchall()
+            #for row in rows:
+            #    print(row)
+            engine = create_engine('postgresql://erp_database:1234@localhost:/erp_database')
+            pd_data('erp_incumbent', engine, if_exists='append', index=False)
+
+            conn.close()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
