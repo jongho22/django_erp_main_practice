@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .api.views import ProductViewset,COA_Viewset,UserCreate,Department_Viewset,Incumbent_Viewset,IncumbentUpdate_Viewset
+from .api.views import ProductViewset,COA_Viewset,UserCreate,Department_Viewset,Incumbent_Viewset,IncumbentUpdate_Viewset,IncumbentUpdate_Detail_Viewset
 from rest_framework.routers import DefaultRouter
 from . import views
 from django.conf.urls.static import static
@@ -20,8 +20,8 @@ urlpatterns = [
     path('api/acounts/registration/', include('dj_rest_auth.registration.urls')),
     path('api/acounts/', include('dj_rest_auth.urls')),
     
-    #path('api/IncumbentUpdate/', IncumbentUpdate_Viewset.as_view()),
-    #path('api/IncumbentUpdate/<int:pk>/', IncumbentUpdate_Detail_Viewset.as_view()),
+    path('api/IncumbentUpdate/', IncumbentUpdate_Viewset.as_view()),
+    path('api/IncumbentUpdate/<int:pk>/', IncumbentUpdate_Detail_Viewset.as_view()),
 
     # Home
     path('',views.home),

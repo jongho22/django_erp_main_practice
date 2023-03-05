@@ -1,6 +1,11 @@
 
 from django.shortcuts import render
-from . import models
+from .models import Incumbent
+import pandas as pd
+
+import os
+import csv
+
 def home(request):
     user = request.user
     return render(request,'base.html',{'user':user})
@@ -21,12 +26,19 @@ def incumbent(request) :
     return render(request,'incumbent.html')
 
 def incumbentDetail(request,pk) :
-    
-    col_data = models.Incumbent.objects.get(사번 = pk)
-    
-    return render(request,'incumbent_detail.html',{'col_data':col_data})
+    return render(request,'incumbent_detail.html')
 
 def incumbent_upload(request) :
+
+    
+    #data = Incumbent.objects.all().values()
+    #pd_data = pd.DataFrame(data)
+
+    #os.chdir('C:/Users/home/Desktop')
+
+    #pd_data.to_csv("export.csv")
+    
+
     return render(request,'incumbent_upload.html')
 
 def retiree(request) :
@@ -37,3 +49,4 @@ def login(request) :
 
 def register(request) :
     return render(request,'register.html')
+
