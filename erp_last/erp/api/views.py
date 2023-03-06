@@ -98,24 +98,20 @@ class IncumbentUpdate_Viewset(APIView):
 
     def post(self, request, format=None):
         serializer = Incumbent_Upload_Serializer(data=request.data)
+        
         if serializer.is_valid():
             serializer.save()
             print("파일을 변환 합니다.")
-
+            
+            # 파일 이름
             file_name = str(request.data.get('upfile'))
             print(file_name)
-            
+    
             pd_data = pd.read_csv(f'./media/uploads/{file_name}',encoding="CP949")
+        
             conn = psycopg2.connect(database="erp_database", user="postgres", password="1234", host="localhost", port="")
-            #print(conn)
-            cur = conn.cursor()
-            #cur.execute("SELECT * FROM erp_incumbent;")
-            #rows = cur.fetchall()
-            #for row in rows:
-            #    print(row)
-            engine = create_engine('postgresql://erp_database:1234@localhost:/erp_database')
-            pd_data('erp_incumbent', engine, if_exists='append', index=False)
-
+            engine = create_engine('postgresql://postgres:1234@localhost/erp_database')
+            pd_data.to_sql('erp_incumbent', engine, if_exists='append', index=False)
             conn.close()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)

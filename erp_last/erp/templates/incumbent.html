@@ -238,7 +238,7 @@
             , contentType: 'application/json; charset=UTF-8'
             , dataType: 'json'
             , success : function(){
-                location.replace('/erp/incumbent')
+                location.replace('/erp/incumbent/?page=1&search=&퇴직여부=false')
                 alert(`${name}님의 퇴직 처리가 완료 되었습니다.`)
             }
         })
