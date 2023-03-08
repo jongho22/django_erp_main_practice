@@ -12,10 +12,12 @@
             <form id="form" name = "form" enctype="multipart/form-data">
                 {% csrf_token %} 
                 <input type="file" name="upfile" id="upfile"></input>
-                <button class="btn btn-success" type="submit" onclick="formSubmit()">추가</button>
+                
             </form>
+            <button class="btn btn-success" onclick="formSubmit()">추가</button>
         </div>
     </div>
+    <h1 id="text"></h1>
 </div>
 <script>
     function formSubmit() {
@@ -31,10 +33,8 @@
             processData: false,
             contentType: false,
             data: formData,
-        
-            success: function (result) {
-                const message = rtn.data.values[0];
-                console.log("message: ", message)
+            complete : function(request,status) {
+                alert("code:"+request.status +"\n"+ request.responseText);
             }
         });
     }

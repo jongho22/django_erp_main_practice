@@ -89,33 +89,41 @@ class Incumbent_Viewset(viewsets.ModelViewSet) :
 class IncumbentUpdate_Viewset(APIView):
 
     # # permission 추가
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         snippets =IncumbentUpdate.objects.all()
         serializer = Incumbent_Upload_Serializer(snippets, many=True)
+        response = request
+        
+        print(f'값 확인 : {request}')
         return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = Incumbent_Upload_Serializer(data=request.data)
-        
         if serializer.is_valid():
             serializer.save()
             print("파일을 변환 합니다.")
-            
-            # 파일 이름
-            file_name = str(request.data.get('upfile'))
+            file_name = str(request.data.get('upfile')) # 파일 이름
             print(file_name)
-    
-            pd_data = pd.read_csv(f'./media/uploads/{file_name}',encoding="CP949")
-        
-            conn = psycopg2.connect(database="erp_database", user="postgres", password="1234", host="localhost", port="")
-            engine = create_engine('postgresql://postgres:1234@localhost/erp_database')
-            pd_data.to_sql('erp_incumbent', engine, if_exists='append', index=False)
-            conn.close()
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            pd_data = pd.read_csv(f'./media/uploads/{file_name}',encoding="CP949")
+            #conn = psycopg2.connect(database="erp_database", user="postgres", password="1234", host="localhost", port="")
+            engine = create_engine('postgresql://postgres:1234@localhost/erp_database')
+            
+            try :
+                pd_data.to_sql('erp_incumbent', engine, if_exists='append', index=False)
+            
+            except Exception as e :
+                sendData = f'{e}'
+                print(e)
+                return Response(sendData, status=status.HTTP_400_BAD_REQUEST)
+            #conn.close()
+            
+            sendData = "정상적으로 저장되었습니다."
+            return Response(sendData, status=status.HTTP_201_CREATED)
+        sendData = "파일이 선택되지 않았습니다."
+        return Response(sendData, status=status.HTTP_400_BAD_REQUEST)
 
 # 재직자 업로드 엑셀 파일 디테일 페이지
 class IncumbentUpdate_Detail_Viewset(APIView):

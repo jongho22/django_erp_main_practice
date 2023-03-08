@@ -9,6 +9,8 @@ import csv
 import datetime
 import xlwt
 
+import requests
+
 from django.http import HttpResponse
 
 def home(request):
@@ -74,6 +76,8 @@ def incumbent_download(request) :
     return response
 
 def incumbent_upload(request) :
+    
+
     return render(request,'incumbent_upload.html')
 
 def retiree(request) :

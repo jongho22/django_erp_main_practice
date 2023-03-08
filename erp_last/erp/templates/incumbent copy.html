@@ -32,7 +32,7 @@
             </br>
             <div class="row">
                 <div class="col-5">
-                    <input id="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value=""></input>
+                    <input id="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search"></input>
                 </div>
                 <div class="col-5">
                     <button class="btn btn-outline-success" type="submit" onclick="search()">검색</button>
@@ -70,106 +70,79 @@
 </div>
 </br>
 <script>
-    $(document).ready(reqAjax(1))
-    var ordering
-
-    function search(){
-        search_keyword = $('#search').val();
-        ordering = ""
-        reqAjax(1)
-    } 
-
-    function sort(sortHow) {
-        search_keyword = $('#search').val();
-        ordering = sortHow
-        reqAjax(1)
+    function search() {
+        var search_keyword = $('#search').val();
+        location.replace(`/erp/incumbent/?page=1&search=${search_keyword}&퇴직여부=false`);
+        reqAjax()
     }
 
-    function reqAjax(currentPage) {
-       
-        var search_keyword = $('#search').val();
-        
-        //console.log(`검색어 : ${search_keyword}`)
-        //console.log(`현재 페이지 : ${currentPage}`)
-        
-        api_url = `/erp/api/Incumbent/?ordering=${ordering}&page=${currentPage}&search=${search_keyword}&퇴직여부=false`
+    function reqAjax() {
+        var currentPage = window.location.href.split("/")
+        if (currentPage[5] == ""){currentPage = 1;}
+        else {currentPage = currentPage[5].substr(6).split("&")[0]}
 
+        // 검색어 쿼리 찾기
+        search_keyword = window.location.href.split("/")[5].substr(6).split("&")[1].substr(7);
+        //$('.search').val() = search_keyword;
+        // 요청 url 
+        api_url = `/erp/api/Incumbent/?page=${currentPage}&search=${search_keyword}&퇴직여부=false`
+    
+        $('#search_show').append(`검색어 : ${decodeURI(search_keyword)}`)
+        $('#search').attr('value',decodeURI(search_keyword));
+        
+        console.log(search_keyword)
         $.ajax({
             url: api_url
             , method : 'GET'
             , dataType:"json"
             , success :  function(data){
+
                 $('.table_body').empty()
                 $('.pagination').empty()
 
-                var totalCount = data["count"] // 전체 데이터 수
-                var totalPage = Math.ceil(totalCount / 10) // 전체 페이지 수
-                
-                const pageCount = 5 //페이지 그룹 수
+                // 총 페이지 계산
+                var totalCount = data["count"]
+                var totalPage = Math.ceil(totalCount / 10)
 
-                let totalGroup = Math.ceil(totalPage / pageCount)
-                let pageGroup = Math.ceil(currentPage / pageCount) 
-                let lastNumber = pageGroup * pageCount // 페이지 그룹에서 마지막 번호
+                // 페이지 그룹
+                const pageCount = 5
 
-                if(totalGroup==pageGroup){
-                    var firstNumber = lastNumber - (pageCount - 1) // 페이지 그룹에서 첫번째 번호
-                }
-                else{
-                    var firstNumber = lastNumber - (pageCount - 1) 
-                }
-                if (lastNumber > totalPage) {lastNumber = totalPage} // 페이지 그룹에서 마지막 번호
-                //if(firstNumber<=0){firstNumber=1} 
+                let pageGroup = Math.ceil(currentPage / pageCount)
+                let lastNumber = pageGroup * pageCount // 5
+
+                if (lastNumber > totalPage) {lastNumber = totalPage}
+                let firstNumber = lastNumber - (pageCount - 1) // 1
                 
-                const next = lastNumber + 1 // 다음 버튼 눌렀을때 페이지 번호
-                const prev = firstNumber - 1 // 이전 버튼 눌렀을때 페이지 번호
+                if(firstNumber<=0){firstNumber=1}
+                const next = lastNumber + 1 // 6
+                const prev = firstNumber - 1 // 0
 
                 var page = ""
-
+                
                 // 이전 버튼
                 if(currentPage>5){
-                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${prev}')">이전</a></li>`
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}&search=${search_keyword}&퇴직여부=false">이전</a></li>`
                 }
                 // 1~5만큼 페이지네이션 그려줌
                 for (let i = firstNumber; i <= lastNumber; i++) {
-                    if(currentPage==i){
-                        page += `<li class="page-item active" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>`        
-                    }
-                    else{page += `<li class="page-itemr" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>`}
+                    page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}&search=${search_keyword}&퇴직여부=false">${i}</a></li>`
                 }
                 // 다음 버튼
-                if((totalGroup!=pageGroup)&&(currentPage!=totalPage)){
-                    page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${next}')">다음</a></li>`
+                if(currentPage!=totalPage){
+                    page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}&search=${search_keyword}&퇴직여부=false">다음</a></li>`
                 }
                 $('.pagination').append(page);
 
-                
                 let end_data = data["results"].length
 
                 const list_col = ['사번','구분','이름','영문이름','근무지','부서','팀','직급','직책','입사일','근속일','주민등록번호','생년월일','연락처','비상연락망','회사_이메일','개인_이메일','주소','최종학력','학위','학교','전공','학점','입사구분','경력사항1','경력사항2',
-                '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5'];
-
+                '경력사항3','경력사항4','경력사항5','자격사항1','자격사항2','자격사항3','자격사항4','자격사항5','어학사항1','어학사항2','어학사항3','어학사항4','어학사항5']; 
+                
                 str = '<TR>';
                 th_str = ''
 
                 for(c in list_col){
-                    if(list_col[c]=="사번"){
-                        th_str += 
-                        `<th scope='col' style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;>
-                            <div class="dropdown">
-                                <a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">사번</a>
-                                <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" onclick="sort('사번')">오름차순</a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" onclick="sort('-사번')">내림차순</a>
-                                </li>
-                                </ul>
-                            </div>
-                        </th>`;
-                    }
-                    else{th_str += `<th scope='col'>${list_col[c]}</th>`;}
+                    th_str += `<th scope='col'>${list_col[c]}</th>`;
                 }
                 th_str +=`<th scope='col'>옵션</th>`;
                 
@@ -199,23 +172,25 @@
                     </TD>
                     </TR>`;
                 }
-
-                $('#plus_th').append(th_str);
-                $('.table_body').append(str);
-
-                console.clear()
+                // 데이터 확인
+                console.log("가져오기 성공");
+                console.log(data);
                 console.log("첫번째 페이지 : " + firstNumber);
                 console.log("마지막 페이지 : " + lastNumber);
                 console.log("데이터 개수 : " + totalCount);
                 console.log("현재 페이지 : " + currentPage);
                 console.log("전체 페이지 : " + totalPage);
-                console.log("현재 페이지 그룹 : " + pageGroup);
-                console.log("전체 페이지 그룹 : " + totalGroup);
-                console.log("정렬 : " + ordering);
-
+                //console.log("검색어 : " + search_keyword);
+                $('#plus_th').append(th_str);
+                $('.table_body').append(str);
+            },
+            error: function(result) {
+                $('#main_title').append("로그인이 필요합니다 !");
             }
         })
     }
+
+    $(document).ready(reqAjax())
 
     function formDelete(worker_number,name) {
         var data2 = {'퇴직여부' : true};
@@ -233,6 +208,9 @@
         })
     }
 
+    function download() {
+        
+    }
 
 </script>
 {% endblock %}
