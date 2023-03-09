@@ -12,11 +12,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-6">
-                    <h1>중헌제약 재직자 명단</h1>
+                    <h1><b>중헌제약 재직자 명단</b></h1>
                 </div>
                 <div class="col-6">
                     <div class="dropdown">
-                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">옵션</a>
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">export/import</a>
                         <ul class="dropdown-menu">
                         <li>
                             <a class="dropdown-item" href="../incumbent_upload">업로드</a>
@@ -38,12 +38,12 @@
                     <button class="btn btn-outline-success" type="submit" onclick="search()">검색</button>
                 </div>
             </div></br>
-            <h3 id="search_show"></h3>
         </div></br>
         <div class="container">
             <table class="table table-hover">
                 <thead>
-                    <tr id="plus_th"> <!-- 테이블 컬럼 -->
+                    <tr id="plus_th">
+                         <!-- 테이블 컬럼 -->
                     </tr>
                 </thead>
                 <tbody class="table_body">
@@ -54,9 +54,7 @@
             <h1 id="main_title"></h1>
         </div>
     </div>
-    <div class="col-5">
-
-    </div>
+    <div class="col-5"></div>
     <!--페이지네이션-->
     <div class="position-relative">
         <div class="position-absolute top-50 start-50 translate-middle">
@@ -153,21 +151,10 @@
 
                 for(c in list_col){
                     if(list_col[c]=="사번"){
-                        th_str += 
-                        `<th scope='col' style="overflow:hidden; white-space : nowrap; text-overflow: ellipsis;">
-                            <div class="dropdown">
-                                <a class="btn btn-secondary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">사번</a>
-                                <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" onclick="sort('사번')">오름차순</a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" onclick="sort('-사번')">내림차순</a>
-                                </li>
-                                </ul>
-                            </div>
-                        </th>`;
+                        th_str += sortText(list_col[c]);
+                    }
+                    else if(list_col[c]=="이름"){
+                        th_str += sortText(list_col[c]);
                     }
                     else{th_str += `<th scope='col'>${list_col[c]}</th>`;}
                 }
@@ -233,6 +220,23 @@
         })
     }
 
+    function sortText(ordering_text) {
+        const string = `<th scope='col'>
+            <div class="dropdown" style="position: static;">
+                <a class="btn btn-secondary btn-sm dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">${ordering_text}</a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" onclick="sort('${ordering_text}')">오름차순</a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" onclick="sort('-${ordering_text}')">내림차순</a>
+                    </li>
+                </ul>
+            </div>
+        </th>`;
+        return string;
+    }
 
 </script>
 {% endblock %}
