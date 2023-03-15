@@ -73,7 +73,7 @@
 
     function search(){
         search_keyword = $('#search').val();
-        ordering = ""
+        ordering = "`"
         reqAjax(1)
     } 
 
@@ -105,42 +105,42 @@
                 
                 const pageCount = 5 //페이지 그룹 수
 
-                let totalGroup = Math.ceil(totalPage / pageCount)
-                let pageGroup = Math.ceil(currentPage / pageCount) 
-                let lastNumber = pageGroup * pageCount // 페이지 그룹에서 마지막 번호
-
-                if(totalGroup==pageGroup){
-                    var firstNumber = lastNumber - (pageCount - 1) // 페이지 그룹에서 첫번째 번호
-                }
-                else{
-                    var firstNumber = lastNumber - (pageCount - 1) 
-                }
-                if (lastNumber > totalPage) {lastNumber = totalPage} // 페이지 그룹에서 마지막 번호
-                //if(firstNumber<=0){firstNumber=1} 
-                
-                const next = lastNumber + 1 // 다음 버튼 눌렀을때 페이지 번호
-                const prev = firstNumber - 1 // 이전 버튼 눌렀을때 페이지 번호
+                let totalGroup = Math.ceil(totalPage / pageCount) // 전체 그룹 수
+                let pageGroup = Math.ceil(currentPage / pageCount)  // 현재 그룹 번호
 
                 var page = ""
+                const next = Number(currentPage) + 1
+                const prev = Number(currentPage) - 1 
 
-                // 이전 버튼
+                if(currentPage!=1){page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${prev}')"><</a></li>`}
+
                 if(currentPage>5){
-                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${prev}')">이전</a></li>`
-                }
-                // 1~5만큼 페이지네이션 그려줌
-                for (let i = firstNumber; i <= lastNumber; i++) {
-                    if(currentPage==i){
-                        page += `<li class="page-item active" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>`        
+                    if((totalGroup==pageGroup)){ // 마지막 그룹 일 경우
+                        for(let i = Number(currentPage)-3; i <= totalPage; i++) {page +=pagemaker(currentPage,i,page)}
                     }
-                    else{page += `<li class="page-itemr" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>`}
+                    else{
+                        for(let i = Number(currentPage)-2; i <= Number(currentPage)+2; i++) {
+                            if(i<=totalPage){
+                                
+                                page += pagemaker(currentPage,i,page)
+                            }
+                        }
+                    }
                 }
-                // 다음 버튼
-                if((totalGroup!=pageGroup)&&(currentPage!=totalPage)){
-                    page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${next}')">다음</a></li>`
+                else{
+                    if(totalPage<=5){
+                        for(let i = 1; i <= totalPage; i++) {page += pagemaker(currentPage,i,page)}
+                    }
+                    else{
+                        for(let i = 1; i <= 5; i++) {page += pagemaker(currentPage,i,page)}
+                    }
+                    
                 }
+
+                if(currentPage!=totalPage){page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${next}')">></a></li>`}
+                
                 $('.pagination').append(page);
 
-                
                 let end_data = data["results"].length
 
                 const list_col = ['사번','구분','이름','영문이름','근무지','부서','팀','직급','직책','입사일','근속일','주민등록번호','생년월일','연락처','비상연락망','회사_이메일','개인_이메일','주소','최종학력','학위','학교','전공','학점','입사구분','경력사항1','경력사항2',
@@ -191,8 +191,8 @@
                 $('.table_body').append(str);
 
                 console.clear()
-                console.log("첫번째 페이지 : " + firstNumber);
-                console.log("마지막 페이지 : " + lastNumber);
+                //console.log("첫번째 페이지 : " + firstNumber);
+                //console.log("마지막 페이지 : " + lastNumber);
                 console.log("데이터 개수 : " + totalCount);
                 console.log("현재 페이지 : " + currentPage);
                 console.log("전체 페이지 : " + totalPage);
@@ -202,6 +202,17 @@
 
             }
         })
+    }
+
+    function pagemaker(currentPage,i) {
+        var page
+
+        if(currentPage==i){
+            page = `<li class="page-item active" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>` 
+            }
+        else{page = `<li class="page-itemr" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>`}
+
+        return page
     }
 
     function formDelete(worker_number,name) {

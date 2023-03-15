@@ -120,69 +120,56 @@
 </br>
 
 <script>
-    $(document).ready(reqAjax(1))
-    
-    function reqAjax(currentPage) {
-       
-        var search_keyword = $('#search').val();
-        
-        //console.log(`검색어 : ${search_keyword}`)
-        //console.log(`현재 페이지 : ${currentPage}`)
-        
-        api_url = `/erp/api/COA/?page=${currentPage}`
 
+    $(document).ready(function reqAjax() {
+
+        var currentPage = window.location.href.split("/")
+        
+        if (currentPage[5] == ""){currentPage = 1;}
+        else {currentPage = currentPage[5].substr(6)}
+     
         $.ajax({
-            url: api_url
+            url:'/erp/api/COA/?page='+currentPage
             , method : 'GET'
             , dataType:"json"
             , success :  function(data){
-                $('.table_body').empty()
-                $('.pagination').empty()
 
-                var totalCount = data["count"] // 전체 데이터 수
-                var totalPage = Math.ceil(totalCount / 10) // 전체 페이지 수
+                // 총 페이지 계산
+                var totalCount = data["count"]
+                var totalPage = Math.ceil(totalCount / 10)
                 
-                const pageCount = 5 //페이지 그룹 수
+                // 페이지 그룹
+                const pageCount = 5
+                
+                let pageGroup = Math.ceil(currentPage / pageCount)
+                let lastNumber = pageGroup * pageCount // 5
 
-                let totalGroup = Math.ceil(totalPage / pageCount) // 전체 그룹 수
-                let pageGroup = Math.ceil(currentPage / pageCount)  // 현재 그룹 번호
-
+                if (lastNumber > totalPage) {lastNumber = totalPage}
+                let firstNumber = lastNumber - (pageCount - 1) // 1
+                if(firstNumber<=0){firstNumber=1}
+                const next = lastNumber + 1 // 6
+                const prev = firstNumber - 1 // 0
+                
                 var page = ""
-                const next = Number(currentPage) + 1
-                const prev = Number(currentPage) - 1 
                 
-                if(currentPage!=1){page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${prev}')"><</a></li>`}
-
+                // 이전 버튼
                 if(currentPage>5){
-                    if((totalGroup==pageGroup)){ // 마지막 그룹 일 경우
-                        for(let i = Number(currentPage)-3; i <= totalPage; i++) {page +=pagemaker(currentPage,i,page)}
-                    }
-                    else{
-                        for(let i = Number(currentPage)-2; i <= Number(currentPage)+2; i++) {
-                            if(i<=totalPage){
-                                
-                                page += pagemaker(currentPage,i,page)
-                            }
-                        }
-                    }
+                    page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${prev}">이전</a></li>`
                 }
-                else{
-                    if(totalPage<=5){
-                        for(let i = 1; i <= totalPage; i++) {page += pagemaker(currentPage,i,page)}
-                    }
-                    else{
-                        for(let i = 1; i <= 5; i++) {page += pagemaker(currentPage,i,page)}
-                    } 
+                // 1~5만큼 페이지네이션 그려줌
+                for (let i = firstNumber; i <= lastNumber; i++) {
+                page += `<li class="page-itemr" id="page_${i}"><a class="page-link" href="?page=${i}">${i}</a></li>`
                 }
-
-                if(currentPage!=totalPage){page += `<li class="page-itemr" id="page_${currentPage}"><a class="page-link" onclick="reqAjax('${next}')">></a></li>`}
-                
+                // 다음 버튼
+                if(currentPage!=totalPage){
+                page+=`<li class="page-itemr" id="page_${currentPage}"><a class="page-link" href="?page=${next}">다음</a></li>`
+                }
                 $('.pagination').append(page);
 
                 str = '<TR>';
-
+                
                 let end_data = data["results"].length
-
+                
                 const list_col = ['코드','계정명','계정_대분류','계정_중분류','계정_소분류','재무제표','비고']
 
                 for(var j = 0; j < end_data; j++){
@@ -191,32 +178,22 @@
                     }
                     str += '</TR>';
                 }
-
-                $('.table_body').append(str);
-
-                //console.log("첫번째 페이지 : " + firstNumber);
-                //console.log("마지막 페이지 : " + lastNumber);
+                // 데이터 확인
+                console.log("가져오기 성공");
+                console.log(data);
+                console.log("첫번째 페이지 : " + firstNumber);
+                console.log("마지막 페이지 : " + lastNumber);
                 console.log("데이터 개수 : " + totalCount);
                 console.log("현재 페이지 : " + currentPage);
                 console.log("전체 페이지 : " + totalPage);
-                console.log("현재 페이지 그룹 : " + pageGroup);
-                console.log("전체 페이지 그룹 : " + totalGroup);
-                //console.log("정렬 : " + ordering);
 
+                $('.table_body').append(str);
+            },
+            error: function(result) {
+                $('#main_title').append("로그인이 필요합니다 !");
             }
         })
-    }
-
-    function pagemaker(currentPage,i) {
-        var page
-
-        if(currentPage==i){
-            page = `<li class="page-item active" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>` 
-            }
-        else{page = `<li class="page-itemr" id="page_${i}"><a class="page-link" onclick="reqAjax('${i}')">${i}</a></li>`}
-
-        return page
-    }
+    })
 
     function formSubmit() {
         var params = jQuery("#form").serialize(); // serialize() : 입력된 모든Element(을)를 문자열의 데이터에 serialize 한다.
